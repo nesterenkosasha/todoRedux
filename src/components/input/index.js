@@ -1,6 +1,5 @@
 import React from 'react';
-import './styles.css';
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 
 const InputComponent = (props) => {
@@ -12,7 +11,7 @@ const InputComponent = (props) => {
         onInput={onInput || null} 
         value={value || null}
         className={Array.isArray(classNames) ? classNames.join(" ") : classNames} 
-        ref={inputRef}
+        ref={inputRef || null}
         />      
     )
 }

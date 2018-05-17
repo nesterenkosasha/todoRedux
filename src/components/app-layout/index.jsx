@@ -1,86 +1,41 @@
-import React, { Component } from 'react';
-import TodoComponent from './todoComponent'
-import FormComponent from './formConponen'
-import PropTypes from 'prop-types'; 
-import { getLocalStorage, setLocalStorage, changeState } from "../../helper.js"
+import React, { PureComponent } from 'react';
+import { Provider } from 'react-redux';
+
+import FormComponent from '../form'
+import TodoComponent from '../todo'
+
 import './styles.css';
+import configureStore from '../../configureStore';
+
+
+const initialItems = [
+    {id: Date.now(),  date: Date.now(), value: "HELLLLLLO", flag: false, readonly: false}
+];
+
+const store = configureStore(initialItems);
+
 
 export default class TodoContainer extends React.PureComponent{
-  constructor(props){
-    super(props);
-    this.state = {
-      todos: []
-    }
-  }
-  
-  componentDidMount(){
-    const todos = getLocalStorage()
-     this.setState({ todos })
-  }
-  
-  handelSubmit = (e) => {
-    e.preventDefault();
-    if(this.inputComponent.value){
-         this.setState({
-      todos: [
-        ...this.state.todos,
-        { 
-          id: Date.now(),
-          date: Date.now(),
-          value: this.inputComponent.value,
-          flag: false,
-          readonly: false
-        }
-      ]
-    }, () => setLocalStorage(this.state.todos))
-    this.inputComponent.value = ""
-    }
-  }
-  
-  handelDeleteClick = (id) => {
-    const updatedTodos = this.state.todos.filter((el) => el.id != id)
-    this.setState({ todos: updatedTodos }, () => setLocalStorage(updatedTodos))
-  }
-  
-  
-  handelDoneClick = (id) => {
-    const updatedTodos = changeState("flag", id, this.state.todos)
-    this.setState({ todos: updatedTodos }, () => setLocalStorage(updatedTodos))
-  }
-  
-  handelUpdateClick = (id) => {
-    const updatedTodos = changeState("readonly", id, this.state.todos)
-    this.setState({ todos: updatedTodos }, () => setLocalStorage(updatedTodos))
-  }
-
-  handelInput = (e, id) => {
-    const updatedTodos = this.state.todos.map((el) => {
-      if(el.id == id){
-        return el = Object.assign(el, {value: e.target.value})
-      } else {
-        return el
-      }
-    })
-    this.setState({ todos: updatedTodos }, () => setLocalStorage(updatedTodos))
-  }
   
   render(){ 
-    const { todos, flag } = this.state
     return (
-      <div className="wrapper">
-      <div className="title" >TO - DO LIST</div>
-      <FormComponent handelSubmit={this.handelSubmit} inputRef={input => this.inputComponent = input} />
-                <div id="output">{
-                  todos.map((el) => <TodoComponent key={el.id} el={el}
-                  handelDeleteClick={this.handelDeleteClick} 
-                        handelDoneClick={this.handelDoneClick}
-                        handelUpdateClick={this.handelUpdateClick}
-                        handelInput={this.handelInput}
-                        />)}</div>       
-      </div>
+      <Provider store={store}>
+        <div className="wrapper">
+          <div className="title" >TO - DO LIST</div>
+            <FormComponent />
+            <TodoComponent />
+        </div>
+      </Provider>
     )
   }
 }
+
+
+
+
+
+
+
 
 
 
